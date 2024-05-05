@@ -2,8 +2,10 @@ from flask import Flask, request, jsonify
 from main.main import predictDisease
 import re
 import warnings
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 def separate_specialization(sentence):
@@ -32,12 +34,12 @@ def predict():
     data = request.json
     
     # Check if the data is in the expected format
-    if 'diseases' not in data or not isinstance(data['diseases'], list):
+    if 'symptoms' not in data or not isinstance(data['symptoms'], list):
         return jsonify({'error': 'Invalid input format'}), 400
 
     warnings.filterwarnings("ignore", category=UserWarning)
     
-    list_of_symptoms = data['diseases']
+    list_of_symptoms = data['symptoms']
     test_symptoms = ",".join(list_of_symptoms)
     test_predictions = predictDisease(test_symptoms)
     result = separate_specialization(test_predictions["final_prediction"])
